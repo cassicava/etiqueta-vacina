@@ -11,9 +11,12 @@
     const termosOverlay = document.getElementById('termosOverlay');
     const btnFecharTermos = document.getElementById('btnFecharTermos');
     
+    const appHeader = document.getElementById('appHeader');
+    const welcomeMsg = document.getElementById('welcomeMsg');
+    const headerCenterArea = document.getElementById('headerCenterArea');
     const headerActions = document.getElementById('headerActions'); 
+    
     const btnSair = document.getElementById('btnSair');
-
     const btnEsqueci = document.getElementById('btnEsqueci');
     const balaoEsqueci = document.getElementById('balaoEsqueci');
 
@@ -28,20 +31,25 @@
             if(typeof renderizarLista === 'function') {
                 renderizarLista();
             }
+            
+            const btnViewVacinas = document.getElementById('btnViewVacinas');
+            const viewToggleBg = document.getElementById('viewToggleBg');
+            if (btnViewVacinas && viewToggleBg) {
+                viewToggleBg.style.width = btnViewVacinas.offsetWidth + 'px';
+                viewToggleBg.style.left = btnViewVacinas.offsetLeft + 'px';
+            }
         }, 100);
     }
 
     if (sessaoExpiraEm && now < parseInt(sessaoExpiraEm)) {
         localStorage.setItem('lf_sessao_expira_vacina', now + (TEMPO_SESSAO_MINUTOS * 60 * 1000));
         
-        const generoSalvo = localStorage.getItem('lf_genero_usuario_vacina') || 'M';
-        welcomeMsg.innerText = generoSalvo === 'F' ? 'Bem-vinda! ✨' : 'Bem-vindo! ✨';
-
         appHeader.style.transition = 'none';
-        headerActions.style.transition = 'none'; 
+        if (headerActions) headerActions.style.transition = 'none'; 
         
         appHeader.classList.add('move-top', 'header-ready', 'logged-in');
-        headerActions.classList.add('visible'); 
+        if (headerActions) headerActions.classList.add('visible'); 
+        if (headerCenterArea) headerCenterArea.classList.add('active');
         
         loginWrapper.style.display = 'none';
         iniciarSistema();
@@ -49,7 +57,7 @@
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 appHeader.style.transition = '';
-                headerActions.style.transition = '';
+                if (headerActions) headerActions.style.transition = '';
             });
         });
     } else {
@@ -57,7 +65,7 @@
             appHeader.classList.add('move-top');
             setTimeout(() => {
                 appHeader.classList.add('header-ready'); 
-                headerActions.classList.add('visible'); 
+                if(headerActions) headerActions.classList.add('visible'); 
                 loginWrapper.classList.add('visible');
             }, 1200); 
         }, 500); 
@@ -72,6 +80,28 @@
             }
         });
     });
+
+    function processarEntrada(genero, nomeDisplay) {
+        appHeader.classList.add('logged-in');
+        loginWrapper.style.opacity = '0';
+        loginWrapper.style.pointerEvents = 'none';
+        setTimeout(() => loginWrapper.style.display = 'none', 600);
+
+        welcomeMsg.innerText = genero === 'F' ? `Bem-vinda, ${nomeDisplay}! ✨` : `Bem-vindo, ${nomeDisplay}! ✨`;
+
+        setTimeout(() => {
+            welcomeMsg.classList.add('show');
+            setTimeout(() => {
+                welcomeMsg.classList.remove('show');
+                setTimeout(() => {
+                    if(headerCenterArea) headerCenterArea.classList.add('active');
+                    if(headerActions) headerActions.classList.add('visible');
+                }, 400); 
+            }, 2000); 
+        }, 800);
+
+        iniciarSistema();
+    }
 
     btnEntrar.addEventListener('click', (e) => {
         e.preventDefault();
@@ -88,26 +118,11 @@
         if (usuarioValido && senhaTem6Digitos) {
             localStorage.setItem('lf_sessao_expira_vacina', Date.now() + (TEMPO_SESSAO_MINUTOS * 60 * 1000));
             localStorage.setItem('lf_genero_usuario_vacina', usuarioValido.genero);
-            localStorage.setItem('lf_nome_usuario_vacina', usuarioValido.usuario); // Salva o nome para o PDF
-
-            welcomeMsg.innerText = usuarioValido.genero === 'F' ? 'Bem-vinda! ✨' : 'Bem-vindo! ✨';
-
-            loginWrapper.style.opacity = '0';
-            loginWrapper.style.pointerEvents = 'none';
             
-            setTimeout(() => {
-                loginWrapper.style.display = 'none';
-                appHeader.classList.add('logged-in'); 
-                
-                setTimeout(() => {
-                    welcomeMsg.classList.add('show');
-                    setTimeout(() => {
-                        welcomeMsg.classList.remove('show');
-                    }, 2500); 
-                }, 800);
+            const nomeFormatado = usuarioValido.usuario.charAt(0).toUpperCase() + usuarioValido.usuario.slice(1);
+            localStorage.setItem('lf_nome_usuario_vacina', nomeFormatado); 
 
-                iniciarSistema();
-            }, 600);
+            processarEntrada(usuarioValido.genero, nomeFormatado);
         } else {
             loginCard.classList.remove('login-error');
             void loginCard.offsetWidth; 
@@ -138,9 +153,12 @@
             setTimeout(() => {
                 appContainer.classList.add('app-hidden');
                 if (typeof contentArea !== 'undefined') contentArea.innerHTML = '';
+                const rotinasArea = document.getElementById('rotinasArea');
+                if (rotinasArea) rotinasArea.innerHTML = '';
             }, 400);
 
             appHeader.classList.remove('logged-in'); 
+            if(headerCenterArea) headerCenterArea.classList.remove('active');
 
             setTimeout(() => {
                 loginWrapper.style.display = 'flex';
@@ -152,15 +170,21 @@
         });
     }
 
-    btnTermos.addEventListener('click', () => {
-        termosOverlay.classList.add('open');
-    });
+    if (btnTermos) {
+        btnTermos.addEventListener('click', () => {
+            termosOverlay.classList.add('open');
+        });
+    }
 
-    btnFecharTermos.addEventListener('click', () => {
-        termosOverlay.classList.remove('open');
-    });
+    if (btnFecharTermos) {
+        btnFecharTermos.addEventListener('click', () => {
+            termosOverlay.classList.remove('open');
+        });
+    }
 
-    termosOverlay.addEventListener('click', (e) => {
-        if (e.target === termosOverlay) termosOverlay.classList.remove('open');
-    });
+    if (termosOverlay) {
+        termosOverlay.addEventListener('click', (e) => {
+            if (e.target === termosOverlay) termosOverlay.classList.remove('open');
+        });
+    }
 })();

@@ -2,14 +2,18 @@ const appHeader = document.getElementById('appHeader');
 const welcomeMsg = document.getElementById('welcomeMsg');
 const appContainer = document.getElementById('appContainer');
 const contentArea = document.getElementById('contentArea');
+const rotinasArea = document.getElementById('rotinasArea');
 const mouseShadow = document.getElementById('mouseShadow');
 const appTitle = document.getElementById('appTitle');
 const btnTheme = document.getElementById('btnTheme');
 const btnConfigPrint = document.getElementById('btnConfigPrint');
 const configPrintOverlay = document.getElementById('configPrintOverlay');
+const btnViewVacinas = document.getElementById('btnViewVacinas');
+const btnViewRotinas = document.getElementById('btnViewRotinas');
 
 let state = {
-    vacinas: [] 
+    vacinas: [],
+    rotinas: []
 };
 
 let configImpresso = {

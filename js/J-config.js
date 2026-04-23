@@ -256,7 +256,11 @@ function atualizarPreview() {
                 const usableH = pxH - (textPad * 2);
                 const usableW = pxW - (textPad * 2);
                 
-                const unitH = usableH / 9.0; 
+                const largeCount = (cfgUser.fields.vacina ? 1 : 0) + (cfgUser.fields.data ? 1 : 0);
+                const smallCount = (cfgUser.fields.lote ? 1 : 0) + (cfgUser.fields.fabricante ? 1 : 0) + (cfgUser.fields.vacinador ? 1 : 0);
+                const totalUnits = (largeCount * 2.0) + (smallCount * 1.5);
+                
+                const unitH = totalUnits > 0 ? (usableH / totalUnits) : 0;
                 let baseLarge = unitH * 2.0; 
                 let baseSmall = unitH * 1.5; 
 

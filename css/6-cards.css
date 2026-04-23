@@ -370,6 +370,7 @@
     opacity: 0;
     transform: translateY(30px);
     animation: slideUp 0.5s ease forwards;
+    grid-column: 1 / -1; 
 }
 
 .empty-state-icon {
@@ -384,6 +385,125 @@
     font-size: 1.15rem;
     font-weight: 600;
     line-height: 1.5;
+}
+
+.rotinas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+}
+
+.rotina-card {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 25px;
+    border-radius: 25px;
+    box-shadow: 0 5px 15px var(--shadow-color);
+    border: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: slideUp 0.5s ease forwards;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.rotina-card.editing {
+    grid-column: 1 / -1; 
+    background-color: var(--modal-bg);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15);
+    transform: scale(1.01);
+    z-index: 5;
+}
+
+.rotina-titulo {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    text-align: center;
+    margin: 0 0 15px 0;
+    border-bottom: 2px dashed var(--header-border);
+    padding-bottom: 15px;
+}
+
+.rotina-chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-grow: 1;
+    align-content: center;
+}
+
+.rotina-chip {
+    background-color: var(--bg-color);
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    box-shadow: 0 2px 5px rgba(37, 99, 235, 0.1);
+}
+
+.rotina-acoes {
+    display: flex;
+    justify-content: center;
+    gap: 25px; 
+    border-top: 1px solid var(--header-border);
+    padding-top: 20px;
+}
+
+.rotina-edit-title-input {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 20px auto;
+    display: block;
+    text-align: center;
+}
+
+.vaccine-checkbox-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    background-color: transparent;
+    padding: 10px;
+    border: none;
+    margin-bottom: 25px;
+}
+
+.vaccine-chip-input {
+    display: none;
+}
+
+.vaccine-chip-label {
+    background-color: transparent;
+    border: 2px solid var(--header-border);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    user-select: none;
+}
+
+.vaccine-chip-label:hover {
+    transform: translateY(-2px);
+}
+
+.vaccine-chip-input:checked + .vaccine-chip-label {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
 }
 
 @media (max-width: 992px) {
@@ -407,5 +527,8 @@
         font-size: 0.85rem;
         display: block;
         margin-bottom: 2px;
+    }
+    .rotinas-grid {
+        grid-template-columns: 1fr;
     }
 }

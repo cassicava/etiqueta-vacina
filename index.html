@@ -28,9 +28,12 @@
         <div id="welcomeMsg" class="welcome-msg">Bem-vindo(a)! ✨</div>
         
         <div class="header-center-area" id="headerCenterArea">
-            <div class="header-divider left-divider"></div>
-            <span id="headerDataArquivo" class="header-data"></span>
-            <div class="header-divider right-divider"></div>
+            <div class="view-toggle" id="viewToggle">
+                <div class="toggle-active-bg" id="viewToggleBg"></div>
+                <button id="btnViewVacinas" class="toggle-btn active">💉 Vacinas</button>
+                <button id="btnViewRotinas" class="toggle-btn">📦 Rotinas</button>
+            </div>
+            <span id="headerDataArquivo" style="display: none;"></span>
         </div>
 
         <div class="header-actions" id="headerActions">
@@ -69,6 +72,7 @@
 
     <div class="app-container app-hidden" id="appContainer">
         <div id="contentArea" class="content-area active"></div>
+        <div id="rotinasArea" class="content-area app-hidden"></div>
     </div>
 
     <div id="termosOverlay" class="termos-overlay">
@@ -115,7 +119,7 @@
                 <h3 class="termo-title">📤 EXPORTAR DADOS</h3>
                 <div class="termo-text backup-text">
                     <hr style="width: 100%;">
-                    <p>Salve uma cópia de segurança de todas as vacinas cadastradas no seu computador para não perder nada!</p>
+                    <p>Salve uma cópia de segurança de todas as vacinas e rotinas cadastradas no seu computador para não perder nada!</p>
                     <p>O arquivo será gerado instantaneamente no formato <strong>.json</strong>.</p>
                     <br><br>
                     <button id="btnExportarBackup" class="btn-salvar-cfg" style="width: 100%; border-radius: 12px; padding: 15px; border: none;">Baixar Backup Seguro</button>
