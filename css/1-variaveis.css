@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700;800&display=swap');
+
+:root {
+    --font-sans: 'Figtree', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    --gradient-start: #2563EB;
+    --gradient-mid: #3B82F6;
+    --gradient-end: #1D4ED8;
+    
+    --bg-color: #f4f5f7;
+    --text-color: #333333;
+    --text-muted: #718096;
+    --header-bg: #f4f5f7;
+    --header-border: #cbd5e0;
+    --glass-bg: rgba(255, 255, 255, 0.5);
+    --glass-border: rgba(255, 255, 255, 0.8);
+    --glass-hover: rgba(232, 245, 243, 0.6);
+    --shadow-color: rgba(0, 0, 0, 0.05);
+    --primary-color: #2563EB;
+    --btn-enviar-color: #2563EB;
+    --btn-excluir-color: #e53e3e;
+    --error-bg: rgba(255, 245, 245, 0.7);
+    --error-border: rgba(254, 178, 178, 0.8);
+    --error-text: #c53030;
+    --modal-bg: #ffffff;
+}
+
+[data-theme="dark"] {
+    --bg-color: #131314;
+    --text-color: #e3e3e3;
+    --text-muted: #8e8e8e;
+    --header-bg: #1e1f20;
+    --header-border: #333639;
+    --glass-bg: rgba(30, 31, 32, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-hover: rgba(50, 52, 54, 0.6);
+    --shadow-color: rgba(0, 0, 0, 0.4);
+    --primary-color: #3b82f6;
+    --btn-enviar-color: #3b82f6;
+    --btn-excluir-color: #e26d6d;
+    --error-bg: rgba(60, 20, 20, 0.6);
+    --error-border: rgba(200, 50, 50, 0.6);
+    --error-text: #fc8181;
+    --modal-bg: #1e1f20;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-sans);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}

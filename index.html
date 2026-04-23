@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etiqueta de Vacina</title>
+    
+    <link rel="stylesheet" href="css/1-variaveis.css">
+    <link rel="stylesheet" href="css/2-layout.css">
+    <link rel="stylesheet" href="css/3-header.css">
+    <link rel="stylesheet" href="css/6-cards.css">
+    <link rel="stylesheet" href="css/7-botoes.css">
+    <link rel="stylesheet" href="css/9-animacoes.css">
+    <link rel="stylesheet" href="css/10-login.css">
+    <link rel="stylesheet" href="css/11-termos.css">
+    <link rel="stylesheet" href="css/12-config.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+    <div class="mouse-shadow" id="mouseShadow"></div>
+
+    <header class="app-header" id="appHeader">
+        <h1 id="appTitle" class="animated-brand-text">Etiqueta de Vacina</h1>
+        
+        <div id="welcomeMsg" class="welcome-msg">Bem-vindo(a)! ✨</div>
+        
+        <div class="header-center-area" id="headerCenterArea">
+            <div class="header-divider left-divider"></div>
+            <span id="headerDataArquivo" class="header-data"></span>
+            <div class="header-divider right-divider"></div>
+        </div>
+
+        <div class="header-actions" id="headerActions">
+            <button id="btnTheme" class="icon-btn" title="Alternar Tema">☀️</button>
+            <button id="btnTermos" class="icon-btn" title="Termos de Uso">⚖️</button>
+            <button id="btnBackup" class="icon-btn hide-until-login" title="Backup (Importar/Exportar)">💾</button>
+            <button id="btnConfigPrint" class="icon-btn hide-until-login" title="Configurar Impressão">⚙️</button>
+            <button id="btnSair" class="icon-btn hide-until-login" title="Sair do Sistema">⏻</button>
+        </div>
+    </header>
+
+    <div id="loginWrapper" class="login-wrapper">
+        <div class="login-card">
+            <h2 class="form-title">Acesso ao Sistema</h2>
+            <p class="form-subtitle">Insira as suas credenciais para entrar.</p>
+            
+            <div class="form-group">
+                <label>Usuário</label>
+                <input type="text" id="inputUsuario" placeholder="nome ou documento" maxlength="20" autocomplete="off" data-lpignore="true" data-form-type="other" readonly onfocus="this.removeAttribute('readonly');" oninput="this.value = this.value.toLowerCase().replace(/\s/g, '')">
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="inputSenha" placeholder="••••••" maxlength="6" autocomplete="new-password" data-lpignore="true" data-form-type="other" readonly onfocus="this.removeAttribute('readonly');" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+            
+            <button id="btnEntrar" class="login-btn-submit">Entrar</button>
+            
+            <div class="esqueci-container">
+                <button id="btnEsqueci" class="btn-esqueci">Esqueci a senha</button>
+                <div id="balaoEsqueci" class="balao-esqueci">
+                    Esqueceu a senha? <br> Pergunte ao Administrador!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container app-hidden" id="appContainer">
+        <div id="contentArea" class="content-area active"></div>
+    </div>
+
+    <div id="termosOverlay" class="termos-overlay">
+        <button class="btn-fechar-overlay" id="btnFecharTermos" title="Fechar">✖</button>
+        <div class="termos-cards-wrapper">
+            <div class="termo-card">
+                <h3 class="termo-title">🔒 TERMOS DE USO</h3>
+                <div class="termo-text">
+                    <hr>
+                    <h4>1. Natureza do Software</h4>
+                    <p>O sistema Vacina opera exclusivamente rodando no seu computador de forma local.</p>
+                    <hr>
+                    <h4>2. Responsabilidade do Utilizador</h4>
+                    <p>É da responsabilidade do utilizador garantir que as etiquetas geradas possuem as informações corretas de lote e validade.</p>
+                </div>
+            </div>
+            
+            <div class="termo-card">
+                <h3 class="termo-title">🛡️ POLÍTICA DE PRIVACIDADE</h3>
+                <div class="termo-text">
+                    <hr>
+                    <h4>1. Princípio Fundamental</h4>
+                    <p>O sistema foi desenvolvido com o princípio de privacidade total:</p>
+                    <ul>
+                        <li>Nenhum dado é coletado ou transmitido remotamente.</li>
+                        <li>Os dados inseridos permanecem salvos localmente.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="backupOverlay" class="termos-overlay">
+        <button class="btn-fechar-overlay" id="btnFecharBackup" title="Fechar">✖</button>
+        <div class="termos-cards-wrapper">
+            <div class="termo-card">
+                <h3 class="termo-title">📤 EXPORTAR DADOS</h3>
+                <div class="termo-text backup-text">
+                    <hr style="width: 100%;">
+                    <p>Salve uma cópia de segurança de todas as vacinas cadastradas no seu computador para não perder nada!</p>
+                    <p>O arquivo será gerado instantaneamente no formato <strong>.json</strong>.</p>
+                    <br><br>
+                    <button id="btnExportarBackup" class="btn-salvar-cfg" style="width: 100%; border-radius: 12px; padding: 15px; border: none;">Baixar Backup Seguro</button>
+                </div>
+            </div>
+            
+            <div class="termo-card">
+                <h3 class="termo-title">📥 IMPORTAR DADOS</h3>
+                <div class="termo-text backup-text">
+                    <hr style="width: 100%;">
+                    <p>Restaure suas vacinas a partir de um arquivo de backup salvo anteriormente.</p>
+                    <p style="color: var(--btn-excluir-color); font-weight: bold;">⚠️ Atenção: Isso substituirá a sua lista atual!</p>
+                    <br><br>
+                    <input type="file" id="inputImportarBackup" accept=".json" style="display:none;">
+                    <button id="btnImportarBackup" class="btn-cancelar-cfg" style="width: 100%; border-radius: 12px; padding: 15px;">Carregar Arquivo .json</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="configPrintOverlay" class="config-overlay app-hidden">
+        <div class="config-modal-large">
+            
+            <div class="config-panel-left">
+                <div class="config-left-header">
+                    <h3 class="config-titulo">⚙️ Configuração de Impressão</h3>
+                    
+                    <div class="tabs-wrapper" id="tabsWrapper">
+                        <div class="tab-active-bg" id="tabActiveBg"></div>
+                        <button class="tab-btn active" data-tab="tab1">📄 Folha</button>
+                        <button class="tab-btn" data-tab="tab2">🏷️ Etiqueta</button>
+                        <button class="tab-btn" data-tab="tab3" id="tabDoseBtn">💉 Reg. de Dose</button>
+                    </div>
+                </div>
+
+                <div class="config-left-content">
+                    <div class="tab-content active" id="tab1">
+                        <div class="config-grupo">
+                            <h4>Tamanho da Folha Inteira</h4>
+                            <div class="config-grupo-linha">
+                                <div class="config-input-box">
+                                    <label>Largura (cm)</label>
+                                    <div class="number-control" id="ctrlPageWidth">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgPageWidth" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-input-box">
+                                    <label>Altura (cm)</label>
+                                    <div class="number-control" id="ctrlPageHeight">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgPageHeight" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="config-grupo">
+                            <h4>Distribuição de Etiquetas na Folha</h4>
+                            <div class="config-grupo-linha">
+                                <div class="config-input-box">
+                                    <label>Colunas</label>
+                                    <div class="number-control" id="ctrlCols">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgCols" step="1" min="1">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-input-box">
+                                    <label>Linhas</label>
+                                    <div class="number-control" id="ctrlRows">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgRows" step="1" min="1">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="config-grupo">
+                            <h4>Margens Externas da Folha</h4>
+                            <div class="config-grupo-linha">
+                                <div class="config-input-box">
+                                    <label>Superior (cm)</label>
+                                    <div class="number-control" id="ctrlMarginTop">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgMarginTop" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-input-box">
+                                    <label>Inferior (cm)</label>
+                                    <div class="number-control" id="ctrlMarginBottom">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgMarginBottom" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="config-grupo-linha" style="margin-top: 10px;">
+                                <div class="config-input-box">
+                                    <label>Esquerda (cm)</label>
+                                    <div class="number-control" id="ctrlMarginLeft">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgMarginLeft" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-input-box">
+                                    <label>Direita (cm)</label>
+                                    <div class="number-control" id="ctrlMarginRight">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgMarginRight" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab2">
+                        <div class="config-grupo">
+                            <h4>Tamanho da Etiqueta Física</h4>
+                            <div class="config-grupo-linha">
+                                <div class="config-input-box">
+                                    <label>Largura (cm)</label>
+                                    <div class="number-control" id="ctrlLabelWidth">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgLabelWidth" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-input-box">
+                                    <label>Altura (cm)</label>
+                                    <div class="number-control" id="ctrlLabelHeight">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgLabelHeight" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="config-grupo">
+                            <h4>Espaçamento entre Etiquetas na Folha</h4>
+                            <div class="config-grupo-linha">
+                                <div class="config-input-box">
+                                    <label>Horizontal (cm)</label>
+                                    <div class="number-control" id="ctrlGapX">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgGapX" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-input-box">
+                                    <label>Vertical (cm)</label>
+                                    <div class="number-control" id="ctrlGapY">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgGapY" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="config-grupo">
+                            <h4>Margem Interna (Área de Impressão)</h4>
+                            <div class="config-grupo-linha">
+                                <div class="config-input-box">
+                                    <label>Superior (cm)</label>
+                                    <div class="number-control" id="ctrlPadTop">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgPadTop" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-input-box">
+                                    <label>Inferior (cm)</label>
+                                    <div class="number-control" id="ctrlPadBottom">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgPadBottom" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="config-grupo-linha" style="margin-top: 10px;">
+                                <div class="config-input-box">
+                                    <label>Esquerda (cm)</label>
+                                    <div class="number-control" id="ctrlPadLeft">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgPadLeft" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-input-box">
+                                    <label>Direita (cm)</label>
+                                    <div class="number-control" id="ctrlPadRight">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgPadRight" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab3">
+                        <div class="config-grupo" style="border: 2px dashed var(--primary-color);">
+                            <h4 style="color: var(--primary-color);">Quantidade de Registros na Etiqueta</h4>
+                            <div class="config-grupo-linha">
+                                <div class="config-input-box">
+                                    <label>Colunas</label>
+                                    <div class="number-control" id="ctrlDoseCols">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgDoseCols" step="1" min="1">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-input-box">
+                                    <label>Linhas</label>
+                                    <div class="number-control" id="ctrlDoseRows">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgDoseRows" step="1" min="1">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="config-grupo">
+                            <h4>Tamanho do Registro de Dose</h4>
+                            <div class="config-grupo-linha">
+                                <div class="config-input-box">
+                                    <label>Largura (cm)</label>
+                                    <div class="number-control" id="ctrlDoseWidth">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgDoseWidth" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-input-box">
+                                    <label>Altura (cm)</label>
+                                    <div class="number-control" id="ctrlDoseHeight">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgDoseHeight" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="config-grupo">
+                            <h4>Espaçamento entre os Registros</h4>
+                            <div class="config-grupo-linha">
+                                <div class="config-input-box">
+                                    <label>Horizontal (cm)</label>
+                                    <div class="number-control" id="ctrlDoseGapX">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgDoseGapX" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-input-box">
+                                    <label>Vertical (cm)</label>
+                                    <div class="number-control" id="ctrlDoseGapY">
+                                        <button class="num-btn minus">-</button>
+                                        <input type="number" id="cfgDoseGapY" step="0.1" min="0">
+                                        <button class="num-btn plus">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-panel-right" id="configRightPanel">
+                <div class="preview-split-container">
+                    <div class="preview-card">
+                        <h4>Folha Completa</h4>
+                        <div id="previewPageWrapper" class="preview-page-wrapper">
+                            <div id="previewPage"></div>
+                        </div>
+                    </div>
+                    <div class="preview-card">
+                        <h4>Zoom na Etiqueta (Divisão dos Registros)</h4>
+                        <div id="previewLabelWrapper" class="preview-label-wrapper">
+                            <div id="previewLabel"></div>
+                        </div>
+                        
+                        <div class="config-botoes-inferior">
+                            <div class="config-botoes">
+                                <button id="btnSalvarConfig" class="btn-salvar-cfg">Salvar</button>
+                                <button id="btnFecharConfig" class="btn-cancelar-cfg">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="js/A-estado.js"></script>
+    <script src="js/B-tema.js"></script>
+    <script src="js/C-interface.js"></script>
+    <script src="js/F-animacoes.js"></script>
+    <script src="js/H-usuarios.js"></script>
+    <script src="js/J-config.js"></script>
+    <script src="js/I-gerarpdf.js"></script>
+    <script src="js/G-login.js"></script>
+</body>
+</html>

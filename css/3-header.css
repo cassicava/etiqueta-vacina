@@ -1,0 +1,204 @@
+.app-header {
+    position: fixed;
+    top: 50vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 90%; 
+    height: 55px;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 40px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    transition: top 1.2s cubic-bezier(0.25, 0.8, 0.25, 1),
+                height 0.6s ease,
+                transform 1.2s cubic-bezier(0.25, 0.8, 0.25, 1),
+                background-color 0.6s ease,
+                border-color 0.6s ease,
+                box-shadow 0.6s ease;
+}
+
+.app-header.move-top {
+    top: 12px; 
+    transform: translateX(-50%); 
+}
+
+.app-header.header-ready {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+
+#appTitle {
+    position: absolute;
+    left: 50%;
+    top: 48%; 
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem; 
+    margin: 0;
+    pointer-events: none;
+    transition: all 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background: linear-gradient(to right, #9CA3AF, #E5E7EB, #FFFFFF, #6B7280, #E5E7EB, #9CA3AF);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: gradient-flow 4s linear infinite;
+    white-space: nowrap;
+}
+
+@keyframes gradient-flow {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+.app-header.move-top #appTitle {
+    font-size: 1.8rem; 
+}
+
+.app-header.logged-in #appTitle {
+    left: 25px;
+    transform: translate(0, -50%); 
+    font-size: 1.8rem; 
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.app-header.logged-in #appTitle:active {
+    transform: translate(0, -50%) scale(0.95);
+}
+
+.welcome-msg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, 10px);
+    opacity: 0;
+    visibility: hidden;
+    font-size: 1.3rem; 
+    font-weight: 700;
+    color: var(--primary-color);
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); 
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.welcome-msg.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%);
+}
+
+.header-center-area {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, 4px) scale(0.98); 
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; 
+    transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.header-center-area.active {
+    visibility: visible; 
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.header-data {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-color);
+    margin: 0 15px;
+    white-space: nowrap;
+    transition: color 0.4s ease;
+}
+
+.header-divider {
+    width: 2px;
+    height: 35px;
+    background-color: var(--header-border);
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.header-center-area.active .header-divider {
+    opacity: 1;
+}
+
+.header-actions {
+    position: absolute;
+    right: 15px; 
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+}
+
+.header-actions.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.icon-btn.hide-until-login {
+    opacity: 0;
+    width: 0;
+    margin-left: -12px; 
+    transform: scale(0.5);
+    pointer-events: none;
+    overflow: hidden;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease; 
+}
+
+.app-header.logged-in .icon-btn.hide-until-login {
+    opacity: 1;
+    width: 45px; 
+    height: 45px; 
+    font-size: 1.8rem; 
+    margin-left: 0;
+    transform: scale(1);
+    pointer-events: auto;
+}
+
+.header-actions .icon-btn:hover {
+    background-color: var(--header-border);
+    transform: scale(1.05);
+}
+
+#btnBackup {
+    font-size: 1.4rem; 
+    padding-bottom: 2px;
+}
+
+#btnConfigPrint {
+    padding-bottom: 0;
+    padding-top: 2px; 
+}
+
+#btnSair {
+    padding-bottom: 0;
+    padding-top: 1px; 
+    color: var(--btn-excluir-color);
+}
+
+#btnSair:hover {
+    background-color: var(--error-bg);
+    transform: scale(1.05);
+}
