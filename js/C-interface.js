@@ -50,8 +50,10 @@ function renderizarLista() {
     if (state.vacinas.length === 0) {
         const emptyCard = document.createElement('div');
         emptyCard.className = 'empty-state';
-        emptyCard.innerHTML = `<div class="empty-state-icon">💉</div><div class="empty-state-text">Você ainda não possui vacinas cadastradas.<br>Clique em "+ Adicionar Vacina" para começar!</div>`;
+        emptyCard.innerHTML = `<div class="empty-state-icon">💉</div><div class="empty-state-text">Você ainda não possui vacinas cadastradas.<br>Clique em "+ Adicionar Vacina" ou carregue o calendário!</div><button id="btnCarregarPNI" class="btn-salvar-cfg" style="margin-top: 20px; padding: 12px 25px; width: auto; border-radius: 12px; border:none; color:white; background-color: var(--primary-color); cursor: pointer; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);">📚 Carregar Catálogo PNI</button>`;
         contentArea.appendChild(emptyCard);
+        
+        document.getElementById('btnCarregarPNI').addEventListener('click', window.carregarCatalogoPNI);
     } else {
         state.vacinas.forEach(item => {
             const card = document.createElement('div');
@@ -67,6 +69,18 @@ function renderizarLista() {
     cardAdd.innerHTML = `<span>+ Adicionar Vacina</span>`;
     cardAdd.onclick = window.adicionarVacina;
     contentArea.appendChild(cardAdd);
+
+    if (state.vacinas.length > 0) {
+        const cardPrintList = document.createElement('div');
+        cardPrintList.className = 'card card-add';
+        cardPrintList.style.backgroundColor = 'var(--primary-color)';
+        cardPrintList.style.color = '#fff';
+        cardPrintList.style.border = 'none';
+        cardPrintList.style.marginTop = '5px';
+        cardPrintList.innerHTML = `<span>🖨️ Imprimir Lista de Vacinas</span>`;
+        cardPrintList.onclick = window.imprimirListaVacinas;
+        contentArea.appendChild(cardPrintList);
+    }
 }
 
 function renderizarRotinas() {
@@ -130,6 +144,44 @@ window.adicionarRotina = function() {
     if (cardAdd) cardAdd.style.display = 'none';
     rotinasArea.scrollTop = rotinasArea.scrollHeight;
 }
+
+window.carregarCatalogoPNI = function() {
+    const nomesVacinas = [
+        "BCG", "Hep. B", "Penta", "VIP",
+        "Pneumo 10", "Rota", "Men. C", "VOP",
+        "FA", "SCR", "Tetra", "DTP",
+        "Hep. A", "HPV", "Men. ACWY", "Varicela", 
+        "Influenza", "dT", "dTpa"
+    ];
+
+    const novasVacinas = [];
+    const mapIds = {};
+    let baseId = Date.now();
+
+    nomesVacinas.forEach((nome, idx) => {
+        const vId = baseId + idx;
+        mapIds[nome] = vId;
+        novasVacinas.push({ id: vId, vacina: nome, lote: '', fabricante: '', validade: '' });
+    });
+
+    const novasRotinas = [
+        { id: baseId + 100, nome: "Ao Nascer", vacinasIds: [mapIds["BCG"], mapIds["Hep. B"]] },
+        { id: baseId + 101, nome: "2 Meses", vacinasIds: [mapIds["Penta"], mapIds["VIP"], mapIds["Pneumo 10"], mapIds["Rota"]] },
+        { id: baseId + 102, nome: "3 Meses", vacinasIds: [mapIds["Men. C"]] },
+        { id: baseId + 103, nome: "4 Meses", vacinasIds: [mapIds["Penta"], mapIds["VIP"], mapIds["Pneumo 10"], mapIds["Rota"]] },
+        { id: baseId + 104, nome: "5 Meses", vacinasIds: [mapIds["Men. C"]] },
+        { id: baseId + 105, nome: "6 Meses", vacinasIds: [mapIds["Penta"], mapIds["VIP"]] },
+        { id: baseId + 106, nome: "9 Meses", vacinasIds: [mapIds["FA"]] },
+        { id: baseId + 107, nome: "12 Meses", vacinasIds: [mapIds["SCR"], mapIds["Pneumo 10"], mapIds["Men. C"]] },
+        { id: baseId + 108, nome: "15 Meses", vacinasIds: [mapIds["DTP"], mapIds["VOP"], mapIds["Tetra"], mapIds["Hep. A"]] },
+        { id: baseId + 109, nome: "4 Anos", vacinasIds: [mapIds["DTP"], mapIds["VOP"], mapIds["SCR"], mapIds["Varicela"], mapIds["Influenza"]] }
+    ];
+
+    state.vacinas = novasVacinas;
+    state.rotinas = novasRotinas;
+    salvarDados();
+    renderizarLista();
+};
 
 window.formatarData = function(input) {
     let v = input.value.replace(/\D/g, ''); 
@@ -365,16 +417,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnViewVacinas && btnViewRotinas) {
         btnViewVacinas.addEventListener('click', () => {
+            document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
             btnViewVacinas.classList.add('active');
-            btnViewRotinas.classList.remove('active');
             moveToggleBg(btnViewVacinas);
             contentArea.classList.remove('app-hidden');
             rotinasArea.classList.add('app-hidden');
             renderizarLista();
         });
+        
         btnViewRotinas.addEventListener('click', () => {
+            document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
             btnViewRotinas.classList.add('active');
-            btnViewVacinas.classList.remove('active');
             moveToggleBg(btnViewRotinas);
             rotinasArea.classList.remove('app-hidden');
             contentArea.classList.add('app-hidden');
@@ -393,6 +446,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnExportarBackup = document.getElementById('btnExportarBackup');
     const btnImportarBackup = document.getElementById('btnImportarBackup');
     const inputImportarBackup = document.getElementById('inputImportarBackup');
+    const btnDicas = document.getElementById('btnDicas');
+    const dicasOverlay = document.getElementById('dicasOverlay');
+    const btnFecharDicas = document.getElementById('btnFecharDicas');
+
+    if (btnDicas) btnDicas.addEventListener('click', () => dicasOverlay.classList.add('open'));
+    if (btnFecharDicas) btnFecharDicas.addEventListener('click', () => dicasOverlay.classList.remove('open'));
+    if (dicasOverlay) dicasOverlay.addEventListener('click', (e) => { if (e.target === dicasOverlay) dicasOverlay.classList.remove('open'); });
 
     if (btnBackup) btnBackup.addEventListener('click', () => backupOverlay.classList.add('open'));
     if (btnFecharBackup) btnFecharBackup.addEventListener('click', () => backupOverlay.classList.remove('open'));

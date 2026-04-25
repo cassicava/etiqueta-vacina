@@ -38,6 +38,7 @@
 
         <div class="header-actions" id="headerActions">
             <button id="btnTheme" class="icon-btn" title="Alternar Tema">☀️</button>
+            <button id="btnDicas" class="icon-btn hide-until-login" title="Dicas de Uso">💡</button>
             <button id="btnTermos" class="icon-btn" title="Termos de Uso">⚖️</button>
             <button id="btnBackup" class="icon-btn hide-until-login" title="Backup (Importar/Exportar)">💾</button>
             <button id="btnConfigPrint" class="icon-btn hide-until-login" title="Configurar Impressão">⚙️</button>
@@ -73,6 +74,36 @@
     <div class="app-container app-hidden" id="appContainer">
         <div id="contentArea" class="content-area active"></div>
         <div id="rotinasArea" class="content-area app-hidden"></div>
+    </div>
+
+    <div id="dicasOverlay" class="termos-overlay">
+        <button class="btn-fechar-overlay" id="btnFecharDicas" title="Fechar">✖</button>
+        <div class="termos-cards-wrapper">
+            <div class="termo-card">
+                <h3 class="termo-title">💡 DICAS DE PREENCHIMENTO</h3>
+                <div class="termo-text">
+                    <hr>
+                    <h4>1. Use Siglas e Abreviações</h4>
+                    <p>Para garantir que o nome da vacina ou do fabricante caiba perfeitamente no espaço do carimbo e fique com uma letra grande, prefira sempre usar siglas. Exemplo: use "FA" em vez de "Febre Amarela", ou "Meningo ACWY" em vez do nome completo.</p>
+                    <hr>
+                    <h4>2. Medidas Precisas</h4>
+                    <p>Utilize uma régua escolar para medir a sua folha de etiquetas físicas. Insira as medidas exatas em centímetros (cm) nas configurações. Lembre-se de medir com precisão os espaçamentos entre uma etiqueta e outra e as margens laterais.</p>
+                </div>
+            </div>
+            
+            <div class="termo-card">
+                <h3 class="termo-title">🖨️ DICAS DE IMPRESSÃO</h3>
+                <div class="termo-text">
+                    <hr>
+                    <h4>1. Escala da Impressão (MUITO IMPORTANTE)</h4>
+                    <p style="color: var(--btn-excluir-color);"><strong>Atenção:</strong> Na tela de impressão do navegador ou do leitor de PDF, certifique-se de que a opção de <strong>Escala</strong> esteja definida como <strong>"Padrão"</strong>, <strong>"Tamanho Real"</strong> ou <strong>"100%"</strong>.</p>
+                    <p>Muitos navegadores aplicam a opção "Ajustar à Área de Impressão" automaticamente, o que encolhe a página criando bordas falsas e faz com que a impressão saia desalinhada das etiquetas físicas.</p>
+                    <hr>
+                    <h4>2. Qualidade de Impressão</h4>
+                    <p>Nas propriedades da impressora, altere a qualidade para "Alta" ou "Ótima". Isso evita que textos pequenos (como o lote e o fabricante) fiquem borrados ou difíceis de ler, especialmente em impressoras mais antigas.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="termosOverlay" class="termos-overlay">
@@ -369,7 +400,11 @@
                                 </div>
                                 <div class="config-input-box" id="vacinadorInputWrapper" style="margin-top: 20px;">
                                     <label>Nome do Vacinador</label>
-                                    <input type="text" id="cfgNomeVacinador" class="card-input input-center" maxlength="12" style="width: 160px; padding: 10px;">
+                                    <input type="text" id="cfgNomeVacinador" class="card-input input-center" maxlength="20" style="width: 160px; padding: 10px;">
+                                    <div style="display: flex; gap: 5px; margin-top: 8px;">
+                                        <button id="btnVacinadorLogado" class="chip-btn" style="font-size: 0.75rem; padding: 4px 10px; border-radius: 8px;">Logado</button>
+                                        <button id="btnVacinadorBranco" class="chip-btn" style="font-size: 0.75rem; padding: 4px 10px; border-radius: 8px;">Em Branco</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

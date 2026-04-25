@@ -233,6 +233,16 @@ function atualizarPreview() {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
+    const getScaledSizeDOM = (text, baseSize, weight, usableW) => {
+        if (!text) return baseSize;
+        ctx.font = `${weight} ${baseSize}px helvetica, sans-serif`;
+        const w = ctx.measureText(text).width;
+        if (w > usableW) {
+            return baseSize * (usableW / w);
+        }
+        return baseSize;
+    };
+
     for (let r = 0; r < cfgUser.doseRows; r++) {
         for (let c = 0; c < cfgUser.doseCols; c++) {
             const dBox = document.createElement('div');
@@ -264,43 +274,26 @@ function atualizarPreview() {
                 let baseLarge = unitH * 2.0; 
                 let baseSmall = unitH * 1.5; 
 
-                let maxEstW = 0;
+                const sizeVacina = cfgUser.fields.vacina ? getScaledSizeDOM(vacV.toUpperCase(), baseLarge, 800, usableW) : baseLarge;
+                const sizeData = cfgUser.fields.data ? getScaledSizeDOM(datV, baseLarge, 800, usableW) : baseLarge;
 
-                if (cfgUser.fields.vacina) {
-                    ctx.font = `800 ${baseLarge}px helvetica, sans-serif`;
-                    maxEstW = Math.max(maxEstW, ctx.measureText(vacV.toUpperCase()).width);
-                }
-                if (cfgUser.fields.data) {
-                    ctx.font = `800 ${baseLarge}px helvetica, sans-serif`;
-                    maxEstW = Math.max(maxEstW, ctx.measureText(datV).width);
-                }
-                if (cfgUser.fields.lote) {
-                    ctx.font = `600 ${baseSmall}px helvetica, sans-serif`;
-                    maxEstW = Math.max(maxEstW, ctx.measureText(lotV).width);
-                }
-                if (cfgUser.fields.fabricante) {
-                    ctx.font = `600 ${baseSmall}px helvetica, sans-serif`;
-                    maxEstW = Math.max(maxEstW, ctx.measureText(fabV).width);
-                }
-                if (cfgUser.fields.vacinador) {
-                    ctx.font = `600 ${baseSmall}px helvetica, sans-serif`;
-                    maxEstW = Math.max(maxEstW, ctx.measureText(usrV.toUpperCase()).width);
-                }
+                const activeLargeSizes = [];
+                if (cfgUser.fields.vacina) activeLargeSizes.push(sizeVacina);
+                if (cfgUser.fields.data) activeLargeSizes.push(sizeData);
+                const capLarge = activeLargeSizes.length > 0 ? Math.min(...activeLargeSizes) : baseLarge;
 
-                let scaleF = 1;
-                if (maxEstW > usableW) {
-                    scaleF = usableW / maxEstW;
-                }
+                const maxSmallAllowed = Math.min(baseSmall, capLarge);
 
-                const fLarge = baseLarge * scaleF;
-                const fSmall = baseSmall * scaleF;
+                const sizeLote = cfgUser.fields.lote ? getScaledSizeDOM(lotV, maxSmallAllowed, 600, usableW) : maxSmallAllowed;
+                const sizeFabricante = cfgUser.fields.fabricante ? getScaledSizeDOM(fabV, maxSmallAllowed, 600, usableW) : maxSmallAllowed;
+                const sizeVacinador = cfgUser.fields.vacinador ? getScaledSizeDOM(usrV.toUpperCase(), maxSmallAllowed, 600, usableW) : maxSmallAllowed;
 
                 const activeItems = [];
-                if (cfgUser.fields.vacina) activeItems.push({ text: vacV, weight: 800, size: fLarge, color: '#000' });
-                if (cfgUser.fields.data) activeItems.push({ text: datV, weight: 800, size: fLarge, color: '#000' });
-                if (cfgUser.fields.lote) activeItems.push({ text: lotV, weight: 600, size: fSmall, color: '#505050' });
-                if (cfgUser.fields.fabricante) activeItems.push({ text: fabV, weight: 600, size: fSmall, color: '#505050' });
-                if (cfgUser.fields.vacinador) activeItems.push({ text: usrV.toUpperCase(), weight: 600, size: fSmall, color: '#505050' });
+                if (cfgUser.fields.vacina) activeItems.push({ text: vacV.toUpperCase(), weight: 800, size: sizeVacina, color: '#000' });
+                if (cfgUser.fields.data) activeItems.push({ text: datV, weight: 800, size: sizeData, color: '#000' });
+                if (cfgUser.fields.lote) activeItems.push({ text: lotV, weight: 600, size: sizeLote, color: '#505050' });
+                if (cfgUser.fields.fabricante) activeItems.push({ text: fabV, weight: 600, size: sizeFabricante, color: '#505050' });
+                if (cfgUser.fields.vacinador) activeItems.push({ text: usrV.toUpperCase(), weight: 600, size: sizeVacinador, color: '#505050' });
 
                 let innerHTML = `<div style="position: relative; width: 100%; height: 100%;">`;
                 const count = activeItems.length;
@@ -404,6 +397,22 @@ if (btnDataBranco) {
     btnDataBranco.addEventListener('click', () => {
         const ano = new Date().getFullYear();
         document.getElementById('cfgTextoData').value = `___/___/${ano}`;
+        atualizarPreview();
+    });
+}
+
+const btnVacinadorLogado = document.getElementById('btnVacinadorLogado');
+if (btnVacinadorLogado) {
+    btnVacinadorLogado.addEventListener('click', () => {
+        document.getElementById('cfgNomeVacinador').value = localStorage.getItem('lf_nome_usuario_vacina') || 'USUÁRIO';
+        atualizarPreview();
+    });
+}
+
+const btnVacinadorBranco = document.getElementById('btnVacinadorBranco');
+if (btnVacinadorBranco) {
+    btnVacinadorBranco.addEventListener('click', () => {
+        document.getElementById('cfgNomeVacinador').value = '_______________';
         atualizarPreview();
     });
 }

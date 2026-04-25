@@ -30,6 +30,7 @@
     flex-direction: column;
     gap: 15px;
     padding-right: 10px;
+    padding-bottom: 80px;
     -webkit-mask-image: linear-gradient(to bottom, black 0%, black 95%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 0%, black 95%, transparent 100%);
 }
@@ -76,5 +77,6 @@
         -webkit-mask-image: none;
         mask-image: none;
         padding-right: 0;
+        padding-bottom: 0;
     }
 }

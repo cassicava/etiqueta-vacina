@@ -16,6 +16,73 @@ window.imprimirRotina = function(id) {
     gerarPDFUnificado(vacinasParaImprimir);
 };
 
+window.imprimirListaVacinas = function() {
+    if (state.vacinas.length === 0) return;
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("Lista de Vacinas Cadastradas", 14, 20);
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const dataHoje = new Date().toLocaleDateString('pt-BR');
+    doc.text(`Gerado em: ${dataHoje}`, 14, 26);
+
+    let startY = 35;
+    const rowHeight = 10;
+    const colWidths = [65, 45, 45, 25]; 
+    const startX = 14;
+
+    doc.setFillColor(230, 230, 230);
+    doc.rect(startX, startY, 180, rowHeight, 'F');
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
+    doc.text("Vacina", startX + 2, startY + 6.5);
+    doc.text("Lote", startX + colWidths[0] + 2, startY + 6.5);
+    doc.text("Fabricante", startX + colWidths[0] + colWidths[1] + 2, startY + 6.5);
+    doc.text("Validade", startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, startY + 6.5);
+
+    startY += rowHeight;
+    doc.setFont("helvetica", "normal");
+
+    const vacinas = [...state.vacinas].sort((a, b) => (a.vacina || '').toLowerCase().localeCompare((b.vacina || '').toLowerCase()));
+
+    vacinas.forEach((v, index) => {
+        if (startY > 270) {
+            doc.addPage();
+            startY = 20;
+            
+            doc.setFillColor(230, 230, 230);
+            doc.rect(startX, startY, 180, rowHeight, 'F');
+            doc.setFont("helvetica", "bold");
+            doc.text("Vacina", startX + 2, startY + 6.5);
+            doc.text("Lote", startX + colWidths[0] + 2, startY + 6.5);
+            doc.text("Fabricante", startX + colWidths[0] + colWidths[1] + 2, startY + 6.5);
+            doc.text("Validade", startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, startY + 6.5);
+            
+            startY += rowHeight;
+            doc.setFont("helvetica", "normal");
+        }
+
+        if (index % 2 === 0) {
+            doc.setFillColor(248, 248, 248);
+            doc.rect(startX, startY, 180, rowHeight, 'F');
+        }
+
+        doc.text((v.vacina || '').toUpperCase(), startX + 2, startY + 6.5);
+        doc.text(v.lote || '', startX + colWidths[0] + 2, startY + 6.5);
+        doc.text(v.fabricante || '', startX + colWidths[0] + colWidths[1] + 2, startY + 6.5);
+        doc.text(v.validade || '', startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, startY + 6.5);
+
+        startY += rowHeight;
+    });
+
+    window.open(URL.createObjectURL(doc.output("blob")));
+};
+
 function gerarPDFUnificado(listaVacinas) {
     const cfg = configImpresso;
     const cfgFields = cfg.fields || { vacina: true, data: true, lote: true, fabricante: true, vacinador: true };
