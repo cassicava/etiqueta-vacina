@@ -1,0 +1,132 @@
+.onboarding-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease;
+}
+
+.onboarding-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.onboarding-card {
+    background: var(--modal-bg);
+    border-radius: 24px;
+    width: 90%;
+    max-width: 450px;
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--glass-border);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.9);
+    transition: transform 0.5s ease;
+}
+
+.onboarding-overlay.active .onboarding-card {
+    transform: scale(1);
+}
+
+.onboarding-progress-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.onboarding-progress-bar {
+    flex: 1;
+    height: 5px;
+    background: var(--header-border);
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+}
+
+.onboarding-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--primary-color);
+    border-radius: 5px;
+}
+
+.onboarding-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 220px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.onboarding-content.fade-out {
+    opacity: 0;
+    transform: translateY(15px);
+}
+
+.onboarding-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    animation: pulseIcon 2s infinite ease-in-out;
+}
+
+.onboarding-title {
+    color: var(--primary-color);
+    font-size: 1.6rem;
+    margin: 0 0 15px 0;
+    font-weight: 800;
+}
+
+.onboarding-text {
+    color: var(--text-color);
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.onboarding-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 16px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    display: none;
+}
+
+.onboarding-btn.active {
+    display: block;
+    animation: popInBtn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.onboarding-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+}
+
+@keyframes pulseIcon {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+@keyframes popInBtn {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}

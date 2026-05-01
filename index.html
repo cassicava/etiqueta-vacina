@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,11 +16,24 @@
     <link rel="stylesheet" href="css/10-login.css">
     <link rel="stylesheet" href="css/11-termos.css">
     <link rel="stylesheet" href="css/12-config.css">
+    <link rel="stylesheet" href="css/13-onboarding.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
+
+    <div id="onboardingOverlay" class="onboarding-overlay">
+        <div class="onboarding-card">
+            <div class="onboarding-progress-container" id="onboardingProgressContainer"></div>
+            <div class="onboarding-content" id="onboardingContent">
+                <div class="onboarding-icon" id="onboardingIcon"></div>
+                <h2 class="onboarding-title" id="onboardingTitle"></h2>
+                <p class="onboarding-text" id="onboardingText"></p>
+            </div>
+            <button id="btnOnboardingStart" class="onboarding-btn">Começar a Usar</button>
+        </div>
+    </div>
 
     <div id="mobileBlock" class="mobile-block">
         <div class="mobile-content">
@@ -90,7 +103,7 @@
         <button class="btn-fechar-overlay" id="btnFecharDicas" title="Fechar">✖</button>
         <div class="termos-cards-wrapper">
             <div class="termo-card">
-                <h3 class="termo-title">💡 DICAS DE PREENCHIMENTO</h3>
+                <h3 class="termo-title">💡 PREENCHIMENTO</h3>
                 <div class="termo-text">
                     <hr>
                     <h4>1. Use Siglas e Abreviações</h4>
@@ -102,15 +115,23 @@
             </div>
             
             <div class="termo-card">
-                <h3 class="termo-title">🖨️ DICAS DE IMPRESSÃO</h3>
+                <h3 class="termo-title">🖨️ Impressão Perfeita</h3>
                 <div class="termo-text">
                     <hr>
-                    <h4>1. Escala da Impressão (MUITO IMPORTANTE)</h4>
-                    <p style="color: var(--btn-excluir-color);"><strong>Atenção:</strong> Na tela de impressão do navegador ou do leitor de PDF, certifique-se de que a opção de <strong>Escala</strong> esteja definida como <strong>"Padrão"</strong>, <strong>"Tamanho Real"</strong> ou <strong>"100%"</strong>.</p>
-                    <p>Muitos navegadores aplicam a opção "Ajustar à Área de Impressão" automaticamente, o que encolhe a página criando bordas falsas e faz com que a impressão saia totalmente desalinhada das etiquetas físicas.</p>
+                    <h4>Escala 100% (CRÍTICO)</h4>
+                    <p>Na hora de imprimir, a "Escala" do PDF <strong>deve</strong> estar em "Padrão" ou "100%". Nunca use "Ajustar à página", ou as etiquetas sairão desalinhadas.</p>
                     <hr>
-                    <h4>2. Qualidade de Impressão</h4>
-                    <p>Nas propriedades da impressora, altere a qualidade para "Alta" ou "Ótima". Isso evita que textos pequenos (como o lote e o fabricante) fiquem borrados ou difíceis de ler, especialmente em impressoras mais antigas.</p>
+                    <h4>Qualidade</h4>
+                    <p>Mude as propriedades da impressora para qualidade "Alta" para garantir a leitura nítida das datas e nomes.</p>
+                </div>
+            </div>
+
+            <div class="termo-card">
+                <h3 class="termo-title">🖥️ Telas e Monitores</h3>
+                <div class="termo-text">
+                    <hr>
+                    <h4>Espaço</h4>
+                    <p>O sistema foi feito para computadores. Se a tela de configuração de folhas ficar espremida ou cortada, pressione <strong>F11</strong> para usar o modo Tela Cheia.</p>
                 </div>
             </div>
         </div>
@@ -120,34 +141,32 @@
         <button class="btn-fechar-overlay" id="btnFecharTermos" title="Fechar">✖</button>
         <div class="termos-cards-wrapper">
             <div class="termo-card">
-                <h3 class="termo-title">🔒 TERMOS DE USO</h3>
+                <h3 class="termo-title">🔒 TERMOS DE USO E RESPONSABILIDADE LEGAL</h3>
                 <div class="termo-text">
                     <hr>
-                    <h4>1. Finalidade do Sistema</h4>
-                    <p>O "Etiqueta de Vacina" é uma ferramenta facilitadora criada exclusivamente para formatar e gerar impressões de Registos de Dose (carimbos) de forma ágil.</p>
+                    <h4>1. Escopo e Natureza da Ferramenta</h4>
+                    <p>O "Etiqueta de Vacina" atua exclusivamente como um utilitário de formatação gráfica para otimizar a criação de carimbos de registro de dose. O sistema não possui vínculo direto com bases de dados governamentais ou conselhos de saúde.</p>
                     <hr>
-                    <h4>2. Responsabilidade Total do Utilizador</h4>
-                    <p>A inserção dos dados (Nome da Vacina, Lote, Fabricante e Validade) é feita de forma estritamente manual pelo utilizador da plataforma.</p>
-                    <p style="color: var(--btn-excluir-color);"><strong>ATENÇÃO:</strong> Qualquer erro de digitação, das datas incorretas, lotes trocados ou informações inválidas que sejam impressas e afixadas em cadernetas de pacientes são de <strong>exclusiva e inteira responsabilidade do profissional que preencheu e gerou a etiqueta</strong>. O sistema não cruza dados de entidades de saúde nem valida a veracidade clínica dos lotes ou validades inseridos.</p>
+                    <h4>2. Isenção de Responsabilidade</h4>
+                    <p style="color: var(--btn-excluir-color);"><strong>AVISO LEGAL:</strong> Todos os dados inseridos (Nome da Vacina, Lote, Fabricante e Validade) são de inserção estritamente manual e declaratória. Qualquer inconsistência, erro de digitação ou aplicação incorreta decorrente da impressão destas etiquetas é de responsabilidade civil e ética exclusiva do profissional de saúde assinante. A plataforma exime-se de qualquer responsabilidade sobre a conduta clínica.</p>
                     <hr>
-                    <h4>3. Verificação Obrigatória</h4>
-                    <p>É estritamente obrigatório conferir os dados da etiqueta gerada com a rotulagem do frasco físico antes de realizar qualquer aplicação no paciente.</p>
+                    <h4>3. Protocolo de Checagem Dupla</h4>
+                    <p>Ao utilizar este sistema, o profissional compromete-se a realizar a dupla checagem obrigatória: confrontar meticulosamente os dados impressos na etiqueta com a rotulagem do frasco/ampola administrado ao paciente.</p>
                 </div>
             </div>
             
             <div class="termo-card">
-                <h3 class="termo-title">🛡️ POLÍTICA DE PRIVACIDADE</h3>
+                <h3 class="termo-title">🛡️ POLÍTICA DE PRIVACIDADE E DADOS</h3>
                 <div class="termo-text">
                     <hr>
-                    <h4>1. Princípio Fundamental de Privacidade</h4>
-                    <p>Este sistema foi concebido com "Zero Trust" (Confiança Zero) em relação a servidores externos:</p>
-                    <ul>
-                        <li><strong>Nenhum dado</strong> inserido no sistema é recolhido, analisado ou transmitido pela internet.</li>
-                        <li>A base de dados de vacinas fica armazenada unicamente de forma local (offline) na memória do seu navegador.</li>
-                    </ul>
+                    <h4>1. Arquitetura Offline (Zero Trust)</h4>
+                    <p>Garantimos a privacidade absoluta das suas configurações. O sistema foi programado para rodar nativamente no seu navegador, sem a necessidade de comunicação com servidores externos. <strong>Nenhum dado inserido é coletado, rastreado, analisado ou armazenado em nuvem.</strong></p>
                     <hr>
-                    <h4>2. Segurança e Backup</h4>
-                    <p>Como os dados não são guardados em servidores centrais (nuvem), a segurança do histórico depende do seu computador. Recomendamos vivamente o uso do botão de <strong>Backup (Exportar/Importar)</strong> para evitar a perda das vacinas configuradas caso limpe o histórico do seu navegador.</p>
+                    <h4>2. Armazenamento Local e Retenção</h4>
+                    <p>As informações são mantidas exclusivamente no <i>Local Storage</i> (armazenamento local) do seu dispositivo. A limpeza do cache, exclusão de cookies ou formatação da máquina resultará na perda irreversível desses dados.</p>
+                    <hr>
+                    <h4>3. Política de Backup</h4>
+                    <p>É de total responsabilidade do utilizador realizar cópias de segurança periódicas utilizando a ferramenta nativa de "Exportar Dados" (.json) disponibilizada no sistema, prevenindo a perda de informações operacionais.</p>
                 </div>
             </div>
         </div>
@@ -506,6 +525,7 @@
     <script src="js/H-usuarios.js"></script>
     <script src="js/J-config.js"></script>
     <script src="js/I-gerarpdf.js"></script>
+    <script src="js/K-onboarding.js"></script>
     <script src="js/G-login.js"></script>
 </body>
 </html>

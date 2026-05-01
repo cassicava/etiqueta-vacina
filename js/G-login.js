@@ -38,6 +38,10 @@
                 viewToggleBg.style.width = btnViewVacinas.offsetWidth + 'px';
                 viewToggleBg.style.left = btnViewVacinas.offsetLeft + 'px';
             }
+
+            if (typeof window.verificarEIniciarOnboarding === 'function') {
+                window.verificarEIniciarOnboarding();
+            }
         }, 100);
     }
 
