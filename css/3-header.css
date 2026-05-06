@@ -231,3 +231,70 @@
     background-color: var(--error-bg);
     transform: scale(1.05);
 }
+
+.balao-backup {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 75px; 
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 15px 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px var(--shadow-color);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    width: 200px;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 300;
+}
+
+.balao-backup.mostrar {
+    animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.balao-backup::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    right: 40px; 
+    margin-left: -8px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent var(--primary-color) transparent;
+}
+
+.btn-fechar-balao {
+    position: absolute;
+    top: 5px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    font-weight: 900;
+    cursor: pointer;
+    padding: 2px 5px;
+}
+
+.btn-fechar-balao:hover {
+    color: #ffffff;
+}
+
+#textoBalaoBackup {
+    cursor: pointer;
+}
+
+@keyframes pop-in {
+    0% { 
+        opacity: 0; 
+        visibility: hidden;
+        transform: scale(0.8) translateY(10px); 
+    }
+    100% { 
+        opacity: 1; 
+        visibility: visible;
+        transform: scale(1) translateY(0); 
+    }
+}

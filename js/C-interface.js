@@ -513,12 +513,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnDicas = document.getElementById('btnDicas');
     const dicasOverlay = document.getElementById('dicasOverlay');
     const btnFecharDicas = document.getElementById('btnFecharDicas');
+    
+    const balaoBackup = document.getElementById('balaoBackup');
+    const btnFecharBalaoBackup = document.getElementById('btnFecharBalaoBackup');
+    const textoBalaoBackup = document.getElementById('textoBalaoBackup');
+
+    window.zerarContadorBackup = function() {
+        localStorage.setItem('vacina_contador_acessos', '0');
+        if (balaoBackup) balaoBackup.classList.remove('mostrar');
+    };
+
+    window.verificarLembreteBackup = function() {
+        const acessos = parseInt(localStorage.getItem('vacina_contador_acessos') || '0');
+        if (acessos >= 5) {
+            if (balaoBackup) {
+                setTimeout(() => balaoBackup.classList.add('mostrar'), 1500);
+            }
+        }
+    };
+
+    if (btnFecharBalaoBackup) {
+        btnFecharBalaoBackup.addEventListener('click', window.zerarContadorBackup);
+    }
+
+    if (textoBalaoBackup) {
+        textoBalaoBackup.addEventListener('click', () => {
+            window.zerarContadorBackup();
+            backupOverlay.classList.add('open');
+        });
+    }
 
     if (btnDicas) btnDicas.addEventListener('click', () => dicasOverlay.classList.add('open'));
     if (btnFecharDicas) btnFecharDicas.addEventListener('click', () => dicasOverlay.classList.remove('open'));
     if (dicasOverlay) dicasOverlay.addEventListener('click', (e) => { if (e.target === dicasOverlay) dicasOverlay.classList.remove('open'); });
 
-    if (btnBackup) btnBackup.addEventListener('click', () => backupOverlay.classList.add('open'));
+    if (btnBackup) {
+        btnBackup.addEventListener('click', () => {
+            window.zerarContadorBackup();
+            backupOverlay.classList.add('open');
+        });
+    }
+
     if (btnFecharBackup) btnFecharBackup.addEventListener('click', () => backupOverlay.classList.remove('open'));
     if (backupOverlay) backupOverlay.addEventListener('click', (e) => { if (e.target === backupOverlay) backupOverlay.classList.remove('open'); });
 
@@ -536,6 +571,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.appendChild(dlNode);
             dlNode.click();
             dlNode.remove();
+            
+            window.zerarContadorBackup();
             backupOverlay.classList.remove('open');
         });
     }

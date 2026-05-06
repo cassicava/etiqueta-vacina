@@ -3,19 +3,15 @@
     const appContainer = document.getElementById('appContainer');
     const btnEntrar = document.getElementById('btnEntrar');
     const loginCard = document.querySelector('.login-card');
-    
     const inputUsuario = document.getElementById('inputUsuario');
     const inputSenha = document.getElementById('inputSenha');
-
     const btnTermos = document.getElementById('btnTermos');
     const termosOverlay = document.getElementById('termosOverlay');
     const btnFecharTermos = document.getElementById('btnFecharTermos');
-    
     const appHeader = document.getElementById('appHeader');
     const welcomeMsg = document.getElementById('welcomeMsg');
     const headerCenterArea = document.getElementById('headerCenterArea');
     const headerActions = document.getElementById('headerActions'); 
-    
     const btnSair = document.getElementById('btnSair');
     const btnEsqueci = document.getElementById('btnEsqueci');
     const balaoEsqueci = document.getElementById('balaoEsqueci');
@@ -42,11 +38,19 @@
             if (typeof window.verificarEIniciarOnboarding === 'function') {
                 window.verificarEIniciarOnboarding();
             }
+
+            if (typeof window.verificarLembreteBackup === 'function') {
+                window.verificarLembreteBackup();
+            }
         }, 100);
     }
 
     if (sessaoExpiraEm && now < parseInt(sessaoExpiraEm)) {
         localStorage.setItem('lf_sessao_expira_vacina', now + (TEMPO_SESSAO_MINUTOS * 60 * 1000));
+        
+        let acessos = parseInt(localStorage.getItem('vacina_contador_acessos') || '0');
+        acessos++;
+        localStorage.setItem('vacina_contador_acessos', acessos.toString());
         
         appHeader.style.transition = 'none';
         if (headerActions) headerActions.style.transition = 'none'; 
@@ -125,6 +129,10 @@
             
             const nomeFormatado = usuarioValido.usuario.charAt(0).toUpperCase() + usuarioValido.usuario.slice(1);
             localStorage.setItem('lf_nome_usuario_vacina', nomeFormatado); 
+
+            let acessos = parseInt(localStorage.getItem('vacina_contador_acessos') || '0');
+            acessos++;
+            localStorage.setItem('vacina_contador_acessos', acessos.toString());
 
             processarEntrada(usuarioValido.genero, nomeFormatado);
         } else {
