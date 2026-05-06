@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Etiqueta de Vacina</title>
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💉</text></svg>">
+    <link rel="icon" href="icone.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icone.svg">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Vacina">
 
     <link rel="stylesheet" href="css/1-variaveis.css">
     <link rel="stylesheet" href="css/2-layout.css">
@@ -121,8 +128,11 @@
                     <h4>Escala 100% (CRÍTICO)</h4>
                     <p>Na hora de imprimir, a "Escala" do PDF <strong>deve</strong> estar em "Padrão" ou "100%". Nunca use "Ajustar à página", ou as etiquetas sairão desalinhadas.</p>
                     <hr>
-                    <h4>Qualidade</h4>
-                    <p>Mude as propriedades da impressora para qualidade "Alta" para garantir a leitura nítida das datas e nomes.</p>
+                    <h4>Limites da Impressora e Margens</h4>
+                    <p>Impressoras comuns não imprimem até a borda exata do papel (elas cortam cerca de 0.4cm). Evite configurar margens menores que 0.4cm para o texto não ser cortado.</p>
+                    <hr>
+                    <h4>Bandeja e Guias de Papel</h4>
+                    <p>Se a sua folha de etiquetas for menor que um A4, ajuste firmemente as garras (guias) da bandeja da impressora para segurar o papel. Folhas soltas entram tortas e causam cortes na impressão.</p>
                 </div>
             </div>
 
@@ -174,28 +184,21 @@
 
     <div id="backupOverlay" class="termos-overlay">
         <button class="btn-fechar-overlay" id="btnFecharBackup" title="Fechar">✖</button>
-        <div class="termos-cards-wrapper">
-            <div class="termo-card">
-                <h3 class="termo-title">📤 EXPORTAR DADOS</h3>
-                <div class="termo-text backup-text">
-                    <hr style="width: 100%;">
-                    <p>Salve uma cópia de segurança de todas as vacinas e rotinas cadastradas no seu computador para não perder nada!</p>
-                    <p>O arquivo será gerado instantaneamente no formato <strong>.json</strong>.</p>
-                    <br><br>
-                    <button id="btnExportarBackup" class="btn-salvar-cfg" style="width: 100%; border-radius: 12px; padding: 15px; border: none;">Baixar Backup Seguro</button>
-                </div>
+        <div class="termos-cards-wrapper backup-wrapper">
+            <div class="termo-card backup-card">
+                <div class="backup-icon">📤</div>
+                <h3 class="backup-title">Exportar Backup</h3>
+                <p class="backup-desc">Salve uma cópia de segurança com todas as suas vacinas e rotinas. Guarde este arquivo em um local seguro!</p>
+                <button id="btnExportarBackup" class="btn-salvar-cfg" style="width: 100%; border-radius: 15px; padding: 18px; font-size: 1.1rem; border: none;">Baixar Arquivo (.json)</button>
             </div>
             
-            <div class="termo-card">
-                <h3 class="termo-title">📥 IMPORTAR DADOS</h3>
-                <div class="termo-text backup-text">
-                    <hr style="width: 100%;">
-                    <p>Restaure suas vacinas a partir de um arquivo de backup salvo anteriormente.</p>
-                    <p style="color: var(--btn-excluir-color); font-weight: bold;">⚠️ Atenção: Isso substituirá a sua lista atual!</p>
-                    <br><br>
-                    <input type="file" id="inputImportarBackup" accept=".json" style="display:none;">
-                    <button id="btnImportarBackup" class="btn-cancelar-cfg" style="width: 100%; border-radius: 12px; padding: 15px;">Carregar Arquivo .json</button>
-                </div>
+            <div class="termo-card backup-card">
+                <div class="backup-icon">📥</div>
+                <h3 class="backup-title">Importar Backup</h3>
+                <p class="backup-desc">Restaure seus dados a partir de um arquivo salvo anteriormente.</p>
+                <div class="backup-alert">⚠️ Atenção: Esta ação substituirá toda a sua lista atual!</div>
+                <input type="file" id="inputImportarBackup" accept=".json" style="display:none;">
+                <button id="btnImportarBackup" class="btn-cancelar-cfg" style="width: 100%; border-radius: 15px; padding: 18px; font-size: 1.1rem;">Selecionar Arquivo</button>
             </div>
         </div>
     </div>

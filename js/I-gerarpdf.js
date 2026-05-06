@@ -1,7 +1,8 @@
 window.imprimirVacina = function(id) {
     const vacina = state.vacinas.find(v => v.id === id);
     if (!vacina) return;
-    gerarPDFUnificado([vacina]);
+    const nomeSeguro = (vacina.vacina || 'Desconhecida').replace(/[^a-z0-9]/gi, '_');
+    gerarPDFUnificado([vacina], `Etiqueta_${nomeSeguro}.pdf`);
 };
 
 window.imprimirRotina = function(id) {
@@ -13,7 +14,8 @@ window.imprimirRotina = function(id) {
         .filter(v => v !== undefined);
         
     if (vacinasParaImprimir.length === 0) return;
-    gerarPDFUnificado(vacinasParaImprimir);
+    const nomeSeguro = (rotina.nome || 'Rotina').replace(/[^a-z0-9]/gi, '_');
+    gerarPDFUnificado(vacinasParaImprimir, `Rotina_${nomeSeguro}.pdf`);
 };
 
 window.imprimirListaVacinas = function() {
@@ -24,16 +26,16 @@ window.imprimirListaVacinas = function() {
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(16);
-    doc.text("Lista de Vacinas Cadastradas", 14, 20);
+    doc.text("Lista de Vacinas Cadastradas", 105, 20, { align: "center" });
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
     const dataHoje = new Date().toLocaleDateString('pt-BR');
-    doc.text(`Gerado em: ${dataHoje}`, 14, 26);
+    doc.text(`Gerado em: ${dataHoje}`, 105, 26, { align: "center" });
 
     let startY = 35;
     const rowHeight = 10;
-    const colWidths = [65, 45, 45, 25]; 
+    const colWidths = [50, 40, 40, 25, 25]; 
     const startX = 14;
 
     doc.setFillColor(230, 230, 230);
@@ -43,7 +45,8 @@ window.imprimirListaVacinas = function() {
     doc.text("Vacina", startX + 2, startY + 6.5);
     doc.text("Lote", startX + colWidths[0] + 2, startY + 6.5);
     doc.text("Fabricante", startX + colWidths[0] + colWidths[1] + 2, startY + 6.5);
-    doc.text("Validade", startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, startY + 6.5);
+    doc.text("Via/Local", startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, startY + 6.5);
+    doc.text("Validade", startX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + 2, startY + 6.5);
 
     startY += rowHeight;
     doc.setFont("helvetica", "normal");
@@ -51,7 +54,7 @@ window.imprimirListaVacinas = function() {
     const vacinas = [...state.vacinas].sort((a, b) => (a.vacina || '').toLowerCase().localeCompare((b.vacina || '').toLowerCase()));
 
     vacinas.forEach((v, index) => {
-        if (startY > 270) {
+        if (startY > 275) {
             doc.addPage();
             startY = 20;
             
@@ -61,7 +64,8 @@ window.imprimirListaVacinas = function() {
             doc.text("Vacina", startX + 2, startY + 6.5);
             doc.text("Lote", startX + colWidths[0] + 2, startY + 6.5);
             doc.text("Fabricante", startX + colWidths[0] + colWidths[1] + 2, startY + 6.5);
-            doc.text("Validade", startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, startY + 6.5);
+            doc.text("Via/Local", startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, startY + 6.5);
+            doc.text("Validade", startX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + 2, startY + 6.5);
             
             startY += rowHeight;
             doc.setFont("helvetica", "normal");
@@ -75,15 +79,24 @@ window.imprimirListaVacinas = function() {
         doc.text(v.vacina || '', startX + 2, startY + 6.5);
         doc.text(v.lote || '', startX + colWidths[0] + 2, startY + 6.5);
         doc.text(v.fabricante || '', startX + colWidths[0] + colWidths[1] + 2, startY + 6.5);
-        doc.text(v.validade || '', startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, startY + 6.5);
+        
+        doc.setFont("helvetica", "bold");
+        doc.text(v.via || '-', startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, startY + 4.5);
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "normal");
+        doc.text(v.local || '-', startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, startY + 8.5);
+        doc.setFontSize(10);
+        
+        doc.text(v.validade || '', startX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + 2, startY + 6.5);
 
         startY += rowHeight;
     });
 
-    window.open(URL.createObjectURL(doc.output("blob")));
+    const dataArquivo = dataHoje.replace(/\//g, '-');
+    doc.save(`Lista_Vacinas_${dataArquivo}.pdf`);
 };
 
-function gerarPDFUnificado(listaVacinas) {
+function gerarPDFUnificado(listaVacinas, nomeArquivo) {
     const cfg = configImpresso;
     const cfgFields = cfg.fields || { vacina: true, data: true, lote: true, fabricante: true, vacinador: true };
     const dataAtual = cfg.textoData || new Date().toLocaleDateString('pt-BR');
@@ -180,5 +193,5 @@ function gerarPDFUnificado(listaVacinas) {
         }
     }
 
-    window.open(URL.createObjectURL(doc.output("blob")));
+    doc.save(nomeArquivo || "Etiquetas.pdf");
 }

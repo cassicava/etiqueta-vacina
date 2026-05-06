@@ -40,6 +40,7 @@ function renderizarLista() {
             <span>Vacina</span>
             <span>Lote</span>
             <span>Fabricante</span>
+            <span class="text-center">Via/Local</span>
             <span class="text-center">Validade</span>
             <span class="header-empty"></span>
             <span class="header-empty"></span>
@@ -110,7 +111,7 @@ function renderizarRotinas() {
 
 window.adicionarVacina = function() {
     const novaId = Date.now();
-    const novaVacina = { id: novaId, vacina: '', lote: '', fabricante: '', validade: '', isNew: true };
+    const novaVacina = { id: novaId, vacina: '', lote: '', fabricante: '', via: '', local: '', validade: '', isNew: true };
     state.vacinas.push(novaVacina);
     const card = document.createElement('div');
     card.className = 'card editing';
@@ -148,11 +149,19 @@ window.adicionarRotina = function() {
 window.carregarCatalogoPNI = function() {
     const nomesVacinas = [
         "BCG", "Hep. B", "Penta", "VIP",
-        "Pneumo 10", "Rota", "Men. C", "VOP",
+        "Pneumo 10", "Rota", "Men. C",
         "FA", "SCR", "Tetra", "DTP",
         "Hep. A", "HPV", "Men. ACWY", "Varicela", 
         "Influenza", "dT", "dTpa"
     ];
+
+    const viasPNI = {
+        "BCG": "ID", "Hep. B": "IM", "Penta": "IM", "VIP": "IM",
+        "Pneumo 10": "IM", "Rota": "VO", "Men. C": "IM",
+        "FA": "SC", "SCR": "SC", "Tetra": "SC", "DTP": "IM",
+        "Hep. A": "IM", "HPV": "IM", "Men. ACWY": "IM", "Varicela": "SC",
+        "Influenza": "IM", "dT": "IM", "dTpa": "IM"
+    };
 
     const novasVacinas = [];
     const mapIds = {};
@@ -160,8 +169,10 @@ window.carregarCatalogoPNI = function() {
 
     nomesVacinas.forEach((nome, idx) => {
         const vId = baseId + idx;
+        const viaDefinida = viasPNI[nome] || '';
+        const localDefinido = viaDefinida === 'VO' ? 'Boca' : '';
         mapIds[nome] = vId;
-        novasVacinas.push({ id: vId, vacina: nome, lote: '', fabricante: '', validade: '' });
+        novasVacinas.push({ id: vId, vacina: nome, lote: '', fabricante: '', via: viaDefinida, local: localDefinido, validade: '' });
     });
 
     const novasRotinas = [
@@ -173,8 +184,8 @@ window.carregarCatalogoPNI = function() {
         { id: baseId + 105, nome: "6 Meses", vacinasIds: [mapIds["Penta"], mapIds["VIP"]] },
         { id: baseId + 106, nome: "9 Meses", vacinasIds: [mapIds["FA"]] },
         { id: baseId + 107, nome: "12 Meses", vacinasIds: [mapIds["SCR"], mapIds["Pneumo 10"], mapIds["Men. C"]] },
-        { id: baseId + 108, nome: "15 Meses", vacinasIds: [mapIds["DTP"], mapIds["VOP"], mapIds["Tetra"], mapIds["Hep. A"]] },
-        { id: baseId + 109, nome: "4 Anos", vacinasIds: [mapIds["DTP"], mapIds["VOP"], mapIds["SCR"], mapIds["Varicela"], mapIds["Influenza"]] }
+        { id: baseId + 108, nome: "15 Meses", vacinasIds: [mapIds["DTP"], mapIds["Tetra"], mapIds["Hep. A"]] },
+        { id: baseId + 109, nome: "4 Anos", vacinasIds: [mapIds["DTP"], mapIds["SCR"], mapIds["Varicela"], mapIds["Influenza"]] }
     ];
 
     state.vacinas = novasVacinas;
@@ -203,6 +214,24 @@ window.atualizarContador = function(input) {
     input.classList.remove('error');
 }
 
+window.atualizarLocalSelect = function(id) {
+    const viaSelect = document.getElementById(`edit-via-${id}`);
+    const localSelect = document.getElementById(`edit-local-${id}`);
+    const optionBoca = localSelect.querySelector('option[value="Boca"]');
+    
+    if (viaSelect.value === 'VO') {
+        optionBoca.style.display = 'block';
+        localSelect.value = 'Boca';
+        localSelect.disabled = true;
+    } else {
+        optionBoca.style.display = 'none';
+        localSelect.disabled = false;
+        if (localSelect.value === 'Boca') {
+            localSelect.value = '';
+        }
+    }
+}
+
 function gerarHTMLCardVacina(item, estado) {
     const classeValidade = classificarValidade(item.validade);
     let tooltipAttr = "";
@@ -216,6 +245,27 @@ function gerarHTMLCardVacina(item, estado) {
                 <div class="card-col"><div class="input-wrapper"><input type="text" id="edit-vacina-${item.id}" class="card-input" placeholder="Vacina" value="${item.vacina}" maxlength="15" oninput="atualizarContador(this)"><span class="char-counter ${item.vacina.length >= 15 ? 'limit-reached' : ''}">${item.vacina.length}/15</span></div></div>
                 <div class="card-col"><div class="input-wrapper"><input type="text" id="edit-lote-${item.id}" class="card-input" placeholder="Lote" value="${item.lote}" maxlength="15" oninput="atualizarContador(this)"><span class="char-counter ${item.lote.length >= 15 ? 'limit-reached' : ''}">${item.lote.length}/15</span></div></div>
                 <div class="card-col"><div class="input-wrapper"><input type="text" id="edit-fabricante-${item.id}" class="card-input" placeholder="Fabricante" value="${item.fabricante}" maxlength="15" oninput="atualizarContador(this)"><span class="char-counter ${item.fabricante.length >= 15 ? 'limit-reached' : ''}">${item.fabricante.length}/15</span></div></div>
+                
+                <div class="card-col">
+                    <div class="stacked-field">
+                        <select id="edit-via-${item.id}" class="card-select" onchange="atualizarLocalSelect(${item.id})">
+                            <option value="">Via</option>
+                            <option value="ID" ${item.via === 'ID' ? 'selected' : ''}>ID</option>
+                            <option value="SC" ${item.via === 'SC' ? 'selected' : ''}>SC</option>
+                            <option value="IM" ${item.via === 'IM' ? 'selected' : ''}>IM</option>
+                            <option value="VO" ${item.via === 'VO' ? 'selected' : ''}>VO</option>
+                        </select>
+                        <select id="edit-local-${item.id}" class="card-select" ${item.via === 'VO' ? 'disabled' : ''}>
+                            <option value="">Local</option>
+                            <option value="MIE" ${item.local === 'MIE' ? 'selected' : ''}>MIE</option>
+                            <option value="MID" ${item.local === 'MID' ? 'selected' : ''}>MID</option>
+                            <option value="MSE" ${item.local === 'MSE' ? 'selected' : ''}>MSE</option>
+                            <option value="MSD" ${item.local === 'MSD' ? 'selected' : ''}>MSD</option>
+                            <option value="Boca" ${item.local === 'Boca' ? 'selected' : ''} ${item.via === 'VO' ? '' : 'style="display:none;"'}>Boca</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="card-col text-center"><div class="input-wrapper"><input type="text" id="edit-validade-${item.id}" class="card-input input-center" placeholder="Validade" value="${item.validade}" oninput="formatarData(this); atualizarContador(this)" maxlength="10"><span class="char-counter ${item.validade.length >= 10 ? 'limit-reached' : ''}">${item.validade.length}/10</span></div></div>
                 <div class="card-separator">|</div>
                 <div class="card-actions">
@@ -229,6 +279,12 @@ function gerarHTMLCardVacina(item, estado) {
                 <div class="card-col"><span class="card-value">${item.vacina}</span></div>
                 <div class="card-col"><span class="card-value">${item.lote}</span></div>
                 <div class="card-col"><span class="card-value">${item.fabricante}</span></div>
+                <div class="card-col">
+                    <div class="stacked-field">
+                        <span class="stacked-text">${item.via || '-'}</span>
+                        <span class="stacked-text">${item.local || '-'}</span>
+                    </div>
+                </div>
                 <div class="card-col text-center"><span class="card-value ${classeValidade}" ${tooltipAttr}>${item.validade}</span></div>
                 <div class="card-separator">|</div>
                 <div class="card-actions">
@@ -243,6 +299,12 @@ function gerarHTMLCardVacina(item, estado) {
                 <div class="card-col"><span class="card-value" data-label="Vacina">${item.vacina}</span></div>
                 <div class="card-col"><span class="card-value" data-label="Lote">${item.lote}</span></div>
                 <div class="card-col"><span class="card-value" data-label="Fabricante">${item.fabricante}</span></div>
+                <div class="card-col">
+                    <div class="stacked-field">
+                        <span class="stacked-text" data-label="Via">${item.via || '-'}</span>
+                        <span class="stacked-text" data-label="Local">${item.local || '-'}</span>
+                    </div>
+                </div>
                 <div class="card-col text-center"><span class="card-value ${classeValidade}" data-label="Validade" ${tooltipAttr}>${item.validade}</span></div>
                 <div class="card-separator">|</div>
                 <div class="card-actions">
@@ -329,6 +391,8 @@ window.salvarEdicaoVacina = function(id) {
     v.vacina = nomeValor;
     v.lote = document.getElementById(`edit-lote-${id}`).value.trim();
     v.fabricante = document.getElementById(`edit-fabricante-${id}`).value.trim();
+    v.via = document.getElementById(`edit-via-${id}`).value;
+    v.local = document.getElementById(`edit-local-${id}`).value;
     v.validade = document.getElementById(`edit-validade-${id}`).value.trim();
     delete v.isNew;
     salvarDados();

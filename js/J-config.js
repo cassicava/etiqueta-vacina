@@ -11,12 +11,10 @@ const inputsCfg = {
     marginRight: document.getElementById('cfgMarginRight'),
     labelWidth: document.getElementById('cfgLabelWidth'),
     labelHeight: document.getElementById('cfgLabelHeight'),
-    
     padTop: document.getElementById('cfgPadTop'),
     padBottom: document.getElementById('cfgPadBottom'),
     padLeft: document.getElementById('cfgPadLeft'),
     padRight: document.getElementById('cfgPadRight'),
-
     doseCols: document.getElementById('cfgDoseCols'),
     doseRows: document.getElementById('cfgDoseRows'),
     doseGapX: document.getElementById('cfgDoseGapX'),
@@ -161,6 +159,30 @@ function atualizarPreview() {
     btnSalvarConfig.disabled = hasError;
     btnSalvarConfig.style.opacity = hasError ? '0.5' : '1';
     btnSalvarConfig.style.cursor = hasError ? 'not-allowed' : 'pointer';
+
+    const grupoMargens = document.getElementById('ctrlMarginTop')?.closest('.config-grupo');
+    if (grupoMargens) {
+        let aviso = document.getElementById('aviso-margem-impressora');
+        if (cfgUser.marginLeft < 0.4 || cfgUser.marginTop < 0.4 || cfgUser.marginRight < 0.4 || cfgUser.marginBottom < 0.4) {
+            if (!aviso) {
+                aviso = document.createElement('div');
+                aviso.id = 'aviso-margem-impressora';
+                aviso.style.color = '#d97706';
+                aviso.style.backgroundColor = 'rgba(245, 158, 11, 0.1)';
+                aviso.style.padding = '8px';
+                aviso.style.borderRadius = '8px';
+                aviso.style.marginTop = '15px';
+                aviso.style.fontSize = '0.85rem';
+                aviso.style.textAlign = 'center';
+                aviso.style.fontWeight = 'bold';
+                aviso.style.width = '100%';
+                aviso.innerText = '⚠️ Atenção: Impressoras comuns cortam margens menores que 0.4cm.';
+                grupoMargens.appendChild(aviso);
+            }
+        } else {
+            if (aviso) aviso.remove();
+        }
+    }
 
     const pWrapperW = previewPageWrapper.clientWidth - 20;
     const pWrapperH = previewPageWrapper.clientHeight - 20; 

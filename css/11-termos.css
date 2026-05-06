@@ -100,6 +100,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .backup-text p {
@@ -137,6 +138,53 @@
 .termo-text::-webkit-scrollbar-track { background: transparent; }
 .termo-text::-webkit-scrollbar-thumb { background: var(--header-border); border-radius: 4px; }
 .termo-text::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+.backup-wrapper {
+    max-width: 950px;
+    height: auto;
+    align-self: center;
+}
+
+.backup-card {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    padding: 50px 40px;
+}
+
+.backup-icon {
+    font-size: 4.5rem;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+}
+
+.backup-title {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin: 0 0 15px 0;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.backup-desc {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin: 0 0 30px 0;
+}
+
+.backup-alert {
+    background-color: var(--error-bg);
+    border: 1px solid var(--btn-excluir-color);
+    color: var(--btn-excluir-color);
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    width: 100%;
+    box-shadow: 0 4px 15px rgba(229, 62, 62, 0.1);
+}
 
 @media (max-width: 992px) {
     .termos-cards-wrapper {

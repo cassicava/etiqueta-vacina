@@ -1,0 +1,35 @@
+{
+    "name": "Etiqueta de Vacina",
+    "short_name": "Vacina",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#131314",
+    "theme_color": "#3b82f6",
+    "icons": [
+        {
+            "src": "icone.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icone.png",
+            "sizes": "192x192 512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "print-pc.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "print-celular.png",
+            "sizes": "720x1280",
+            "type": "image/png"
+        }
+    ]
+}
