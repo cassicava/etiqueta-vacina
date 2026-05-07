@@ -33,6 +33,71 @@ function classificarValidade(validadeStr) {
     return 'validade-ok';
 }
 
+function mostrarAlerta(mensagem, tipo = 'aviso') {
+    let overlay = document.getElementById('customAlertOverlay');
+    
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'customAlertOverlay';
+        overlay.className = 'termos-overlay';
+        overlay.innerHTML = `
+            <div class="termo-card" style="max-width: 420px; height: auto; flex: none; text-align: center; padding: 40px 30px; margin: auto; transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);">
+                <div id="customAlertIcon" style="font-size: 3.5rem; margin-bottom: 20px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));"></div>
+                <h3 class="termo-title" id="customAlertTitle" style="margin-bottom: 15px; font-weight: 800;"></h3>
+                <div class="termo-text" style="overflow: visible;">
+                    <p id="customAlertMessage" style="font-size: 1.1rem; margin-bottom: 30px; line-height: 1.5;"></p>
+                </div>
+                <button id="btnCustomAlertOk" class="btn-salvar-cfg" style="width: 100%; border-radius: 15px; border: none; padding: 16px; font-size: 1.1rem;">OK, entendi</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        document.getElementById('btnCustomAlertOk').addEventListener('click', () => {
+            overlay.classList.remove('open');
+        });
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) overlay.classList.remove('open');
+        });
+    }
+
+    const titleEl = document.getElementById('customAlertTitle');
+    const iconEl = document.getElementById('customAlertIcon');
+    const msgEl = document.getElementById('customAlertMessage');
+    const btnEl = document.getElementById('btnCustomAlertOk');
+
+    if (tipo === 'erro') {
+        titleEl.innerText = 'Atenção!';
+        titleEl.style.color = 'var(--btn-excluir-color)';
+        iconEl.innerText = '⚠️';
+        btnEl.style.backgroundColor = 'var(--btn-excluir-color)';
+    } else if (tipo === 'sucesso') {
+        titleEl.innerText = 'Sucesso!';
+        titleEl.style.color = '#10B981';
+        iconEl.innerText = '🎉';
+        btnEl.style.backgroundColor = '#10B981';
+    } else {
+        titleEl.innerText = 'Aviso';
+        titleEl.style.color = 'var(--primary-color)';
+        iconEl.innerText = '💡';
+        btnEl.style.backgroundColor = 'var(--primary-color)';
+    }
+
+    msgEl.innerText = mensagem;
+    
+    requestAnimationFrame(() => {
+        overlay.classList.add('open');
+    });
+}
+
+function existeAcaoPendente() {
+    if (document.querySelector('.editing') || document.querySelector('.btn-confirm')) {
+        mostrarAlerta("Por favor, conclua (salve ou cancele) a alteração atual antes de abrir ou editar outro item.", "aviso");
+        return true;
+    }
+    return false;
+}
+
 function renderizarLista() {
     carregarDados();
     contentArea.innerHTML = `
@@ -110,6 +175,8 @@ function renderizarRotinas() {
 }
 
 window.adicionarVacina = function() {
+    if (existeAcaoPendente()) return;
+    
     const novaId = Date.now();
     const novaVacina = { id: novaId, vacina: '', lote: '', fabricante: '', via: '', local: '', validade: '', isNew: true };
     state.vacinas.push(novaVacina);
@@ -126,8 +193,10 @@ window.adicionarVacina = function() {
 }
 
 window.adicionarRotina = function() {
+    if (existeAcaoPendente()) return;
+    
     if (state.vacinas.length === 0) {
-        alert("Cadastre pelo menos uma vacina antes de criar uma rotina!");
+        mostrarAlerta("Cadastre pelo menos uma vacina antes de criar uma rotina!", "aviso");
         return;
     }
     const novaId = Date.now();
@@ -147,6 +216,8 @@ window.adicionarRotina = function() {
 }
 
 window.carregarCatalogoPNI = function() {
+    if (existeAcaoPendente()) return;
+
     const nomesVacinas = [
         "BCG", "Hep. B", "Penta", "VIP",
         "Pneumo 10", "Rota", "Men. C",
@@ -261,6 +332,8 @@ function gerarHTMLCardVacina(item, estado) {
                             <option value="MID" ${item.local === 'MID' ? 'selected' : ''}>MID</option>
                             <option value="MSE" ${item.local === 'MSE' ? 'selected' : ''}>MSE</option>
                             <option value="MSD" ${item.local === 'MSD' ? 'selected' : ''}>MSD</option>
+                            <option value="MMII" ${item.local === 'MMII' ? 'selected' : ''}>MMII</option>
+                            <option value="MMSS" ${item.local === 'MMSS' ? 'selected' : ''}>MMSS</option>
                             <option value="Boca" ${item.local === 'Boca' ? 'selected' : ''} ${item.via === 'VO' ? '' : 'style="display:none;"'}>Boca</option>
                         </select>
                     </div>
@@ -357,6 +430,8 @@ function gerarHTMLCardRotina(item, estado) {
 }
 
 window.mudarEstadoCardVacina = function(id, estado) {
+    if (estado !== 'view' && existeAcaoPendente()) return;
+    
     const v = state.vacinas.find(x => x.id === id);
     if (!v) return;
     const card = document.getElementById(`vacina-${id}`);
@@ -367,6 +442,8 @@ window.mudarEstadoCardVacina = function(id, estado) {
 }
 
 window.mudarEstadoCardRotina = function(id, estado) {
+    if (estado !== 'view' && existeAcaoPendente()) return;
+    
     const r = state.rotinas.find(x => x.id === id);
     if (!r) return;
     const card = document.getElementById(`rotina-${id}`);
@@ -414,7 +491,7 @@ window.salvarEdicaoRotina = function(id) {
     const checkboxes = document.querySelectorAll(`.cb-rotina-${id}:checked`);
     const selecionadas = Array.from(checkboxes).map(cb => parseInt(cb.value));
     if (selecionadas.length === 0) {
-        alert("Selecione pelo menos uma vacina para compor esta rotina!");
+        mostrarAlerta("Selecione pelo menos uma vacina para compor esta rotina!", "aviso");
         return;
     }
     r.nome = nomeValor;
@@ -481,6 +558,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnViewVacinas && btnViewRotinas) {
         btnViewVacinas.addEventListener('click', () => {
+            if (btnViewVacinas.classList.contains('active')) return;
+            if (existeAcaoPendente()) return;
+            
             document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
             btnViewVacinas.classList.add('active');
             moveToggleBg(btnViewVacinas);
@@ -490,6 +570,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         btnViewRotinas.addEventListener('click', () => {
+            if (btnViewRotinas.classList.contains('active')) return;
+            if (existeAcaoPendente()) return;
+            
             document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
             btnViewRotinas.classList.add('active');
             moveToggleBg(btnViewRotinas);
@@ -560,7 +643,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnExportarBackup) {
         btnExportarBackup.addEventListener('click', () => {
             if (state.vacinas.length === 0 && state.rotinas.length === 0) {
-                alert("Você não possui dados para exportar!");
+                mostrarAlerta("Você não possui dados para exportar!", "aviso");
                 return;
             }
             const dataToExport = { vacinas: state.vacinas, rotinas: state.rotinas };
@@ -598,9 +681,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     salvarDados();
                     btnViewVacinas.click();
                     backupOverlay.classList.remove('open');
-                    alert("🎉 Backup importado com sucesso!");
+                    mostrarAlerta("Backup importado com sucesso!", "sucesso");
                 } catch(err) {
-                    alert("Arquivo inválido! Certifique-se que é o backup correto.");
+                    mostrarAlerta("Arquivo inválido! Certifique-se que é o backup correto.", "erro");
                 }
             };
             reader.readAsText(file);
